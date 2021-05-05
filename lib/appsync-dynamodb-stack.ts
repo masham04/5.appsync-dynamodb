@@ -20,11 +20,31 @@ export class AppsyncDynamodbStack extends cdk.Stack {
       },
       xrayEnabled: true,
     });
-
+    //creating lambda function
     const lambda_function = new lambda.Function(this, "MyFunction", {
       runtime: lambda.Runtime.NODEJS_12_X,
       handler: "index.handler",
       code: lambda.Code.fromAsset("lambda"),
     });
+    //Defining datasource
+    const lambda_datasource = api.addLambdaDataSource(
+      "lambda_datasource",
+      lambda_function
+    );
+    // Resolvers
+    lambda_datasource.createResolver({
+      typeName: "Query",
+      fieldName: "welcome",
+    });
+    //creating dynamodb database
+    const productTable = new ddb.Table(this, "productTable", {
+      partitionKey: {
+        name: "id",
+        type: ddb.AttributeType.STRING,
+      },
+    });
+    // enable the Lambda function to access the DynamoDB table (using IAM)
+    productTable.grantFullAccess(lambda_function);
+    lambda_function.addEnvironment("TableName", productTable.tableName);
   }
 }

@@ -43,7 +43,7 @@ export class AppsyncDynamodbStack extends cdk.Stack {
       fieldName: "addProduct",
     });
 
-    //creating dynamodb database
+    //creating dynamodb Table
     const productTable = new ddb.Table(this, "productTable", {
       tableName: "Products",
       partitionKey: {
@@ -54,6 +54,6 @@ export class AppsyncDynamodbStack extends cdk.Stack {
 
     // enable the Lambda function to access the DynamoDB table (using IAM)
     productTable.grantFullAccess(lambda_function);
-    lambda_function.addEnvironment("TableName", productTable.tableName);
+    lambda_function.addEnvironment("TABLE_NAME", productTable.tableName);
   }
 }

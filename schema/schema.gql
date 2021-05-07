@@ -8,7 +8,7 @@ input ProductInput {
 }
 
 type Product {
-  id: Int
+  id: String
   name: String
   price: Int
 }

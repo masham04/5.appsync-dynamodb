@@ -1,4 +1,5 @@
-import { type } from "os";
+import { DynamoDB } from "aws-sdk";
+const documentClient = new DynamoDB.DocumentClient();
 
 type AppSyncEvent = {
   info: {
@@ -9,16 +10,23 @@ type AppSyncEvent = {
   };
 };
 type Product = {
-  id: String;
-  name: String;
-  price: Number;
+  id: String,
+  name: String,
+  price: Number
 };
 
 exports.handler = async (event: AppSyncEvent) => {
-  if (event.info.fieldName === "welcome") {
+  if (event.info.fieldName == "welcome") {
     return "Hello World";
-  } else if (event.info.fieldName === "addProduct") {
-    return;
+  } else if (event.info.fieldName == "addProduct") {
+    event.arguments.product.id = "key-" + Math.random();
+    const params = {
+      TableName: process.env.TABLE_NAME || "",
+      Item: event.arguments.product,
+    };
+    const data = await documentClient.put(params).promise();
+    console.log("After adding =", data);
+    return event.arguments.product;
   } else {
     return "Not Found";
   }

@@ -31,18 +31,27 @@ export class AppsyncDynamodbStack extends cdk.Stack {
       "lambda_datasource",
       lambda_function
     );
+
     // Resolvers
     lambda_datasource.createResolver({
       typeName: "Query",
       fieldName: "welcome",
     });
+
+    lambda_datasource.createResolver({
+      typeName: "Mutation",
+      fieldName: "addProduct",
+    });
+
     //creating dynamodb database
     const productTable = new ddb.Table(this, "productTable", {
+      tableName: "Products",
       partitionKey: {
         name: "id",
         type: ddb.AttributeType.STRING,
       },
     });
+
     // enable the Lambda function to access the DynamoDB table (using IAM)
     productTable.grantFullAccess(lambda_function);
     lambda_function.addEnvironment("TableName", productTable.tableName);

@@ -7,12 +7,14 @@ type AppSyncEvent = {
   };
   arguments: {
     product: Product;
+    productId: String;
   };
 };
+
 type Product = {
-  id: String,
-  name: String,
-  price: Number
+  id: String;
+  name: String;
+  price: Number;
 };
 
 exports.handler = async (event: AppSyncEvent) => {
@@ -27,6 +29,18 @@ exports.handler = async (event: AppSyncEvent) => {
     const data = await documentClient.put(params).promise();
     console.log("After adding =", data);
     return event.arguments.product;
+  }
+   else if (event.info.fieldName == "deleteProduct") {
+    const params = {
+      TableName: process.env.TABLE_NAME || "",
+      Key: {
+        id: event.arguments.productId,
+      },
+    };
+
+    const data = await documentClient.delete(params).promise();
+    console.log("After deleting =", data);
+    return "Deleted";
   } else {
     return "Not Found";
   }

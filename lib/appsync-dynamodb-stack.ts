@@ -42,6 +42,10 @@ export class AppsyncDynamodbStack extends cdk.Stack {
       typeName: "Mutation",
       fieldName: "addProduct",
     });
+    lambda_datasource.createResolver({
+      typeName: "Mutation",
+      fieldName: "deleteProduct",
+    });
 
     //creating dynamodb Table
     const productTable = new ddb.Table(this, "productTable", {
